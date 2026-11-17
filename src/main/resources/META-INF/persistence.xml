@@ -1,12 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/XML/XMLDocument.xml to edit this template
--->
 
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="
+             https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
+             version="3.2">
 
+    <persistence-unit name="gestion-stock-pu">
 
-<root>
-    
-</root>
+        <!-- Hibernate será nuestro proveedor JPA -->
+        <provider>
+            org.hibernate.jpa.HibernatePersistenceProvider
+        </provider>
 
+        <properties>
+
+            <!-- Configuración de conexión con MySQL -->
+            <property name="jakarta.persistence.jdbc.driver"
+                      value="com.mysql.cj.jdbc.Driver"/>
+            
+            <property name="jakarta.persistence.jdbc.user"
+                      value="root"/>
+
+            <property name="jakarta.persistence.jdbc.password"
+                      value="patan0843"/>
+
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost:3306/gestion_stock"/>
+            
+            <!-- Hibernate valida las tablas existentes -->
+            <property name="hibernate.hbm2ddl.auto"
+                      value="validate"/>
+
+            <!-- Mostrar consultas SQL en consola -->
+            <property name="hibernate.show_sql"
+                      value="true"/>
+
+            <property name="hibernate.format_sql"
+                      value="true"/>
+
+        </properties>
+
+    </persistence-unit>
+
+</persistence>
