@@ -1,1 +1,23 @@
-/target/
+# Archivos generados por Maven
+target/
+
+# Archivos compilados
+*.class
+
+# Logs
+*.log
+
+# Configuraciones locales del IDE
+/nbproject/private/
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
+
+# Configuraciones personales de editores
+.idea/
+.vscode/
+
+# Archivos temporales
+*.tmp
+*.bak
