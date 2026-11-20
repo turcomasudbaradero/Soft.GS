@@ -1,5 +1,6 @@
 package model;
 
+import exception.OperacionNoPermitidaException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,7 +12,7 @@ class CompraTest {
         Proveedor proveedor = new Proveedor("P-COMPRA", "20-11111111-1",
                 "Proveedor Demo", "Calle 1", "111", "proveedor@test.com");
         Compra compra = new Compra("FC-0001", proveedor, "Prueba unitaria");
-        assertThrows(IllegalStateException.class, compra::marcarConfirmada);
+        assertThrows(OperacionNoPermitidaException.class, compra::marcarConfirmada);
 
         Rubro rubro = new Rubro("R-COMPRA", "Perifericos", "Demo");
         Articulo articulo = new Articulo("A-COMPRA", "Teclado", rubro,

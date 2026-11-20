@@ -1,5 +1,8 @@
 package service;
 
+import exception.DatosInvalidosException;
+import exception.EntidadNoEncontradaException;
+import exception.OperacionNoPermitidaException;
 import model.Articulo;
 import model.Compra;
 import model.DetalleCompra;
@@ -17,7 +20,7 @@ public class CompraService {
     public Integer crearBorrador(String numero, Integer idProveedor, String observaciones) {
         
         return TransactionExecutor.ejecutar(em -> {
-            var proveedor = new ProveedorRepository(em).buscarPorId(idProveedor).orElseThrow(() -> new IllegalArgumentException("No existe el proveedor."));
+            var proveedor = new ProveedorRepository(em).buscarPorId(idProveedor).orElseThrow(() -> new EntidadNoEncontradaException("No existe el proveedor."));
             Compra compra = new Compra(numero, proveedor, observaciones);
             new CompraRepository(em).guardar(compra);
             return compra.getId();
@@ -27,7 +30,7 @@ public class CompraService {
     public void agregarDetalle(Integer idCompra, Integer idArticulo, int cantidad, java.math.BigDecimal precioCompra) {
         
         TransactionExecutor.ejecutar(em -> {
-            Compra compra = new CompraRepository(em).buscarPorIdConBloqueo(idCompra).orElseThrow(() -> new IllegalArgumentException("No existe la compra."));
+            Compra compra = new CompraRepository(em).buscarPorIdConBloqueo(idCompra).orElseThrow(() -> new EntidadNoEncontradaException("No existe la compra."));
             Articulo articulo = bloquearArticulo(em, idArticulo);
             DetalleCompra detalle = new DetalleCompra(articulo, cantidad, precioCompra);
             compra.agregarDetalle(detalle);
@@ -39,7 +42,7 @@ public class CompraService {
     public void quitarDetalle(Integer idCompra, Integer idArticulo) {
         
         TransactionExecutor.ejecutar(em -> {
-            Compra compra = new CompraRepository(em).buscarPorIdConBloqueo(idCompra).orElseThrow(() -> new IllegalArgumentException("No existe la compra."));
+            Compra compra = new CompraRepository(em).buscarPorIdConBloqueo(idCompra).orElseThrow(() -> new EntidadNoEncontradaException("No existe la compra."));
             DetalleCompra detalle = compra.getDetalles().stream().filter(d -> d.getArticulo().getId().equals(idArticulo)).findFirst().orElseThrow(() -> new IllegalArgumentException("El articulo no esta en la compra."));
             compra.quitarDetalle(detalle);
             return null;
@@ -48,9 +51,9 @@ public class CompraService {
 
     public Compra registrarCompra(Compra compra) {
         
-        if (compra == null) throw new IllegalArgumentException("La compra es obligatoria.");
+        if (compra == null) throw new DatosInvalidosException("La compra es obligatoria.");
         if (compra.getEstado() != EstadoCompra.BORRADOR)
-            throw new IllegalArgumentException("Solo se puede registrar una compra en borrador.");
+            throw new OperacionNoPermitidaException("Solo se puede registrar una compra en borrador.");
         return TransactionExecutor.ejecutar(em -> new CompraRepository(em).guardar(compra));
     }
 
@@ -58,12 +61,12 @@ public class CompraService {
     public void confirmarCompra(Integer idCompra) {
         
         TransactionExecutor.ejecutar(em -> {
-            Compra compra = new CompraRepository(em).buscarPorIdConBloqueo(idCompra).orElseThrow(() -> new IllegalArgumentException("No existe la compra " + idCompra));
+            Compra compra = new CompraRepository(em).buscarPorIdConBloqueo(idCompra).orElseThrow(() -> new EntidadNoEncontradaException("No existe la compra " + idCompra));
             compra.validarParaConfirmar();
             for (DetalleCompra detalle : compra.getDetalles()) {
                 Articulo articulo = bloquearArticulo(em, detalle.getArticulo().getId());
                 if (!articulo.isActivo())
-                    throw new IllegalStateException("La compra contiene un articulo inactivo.");
+                    throw new OperacionNoPermitidaException("La compra contiene un articulo inactivo.");
                 articulo.incrementarStock(detalle.getCantidad());
             }
             compra.marcarConfirmada();
@@ -75,9 +78,9 @@ public class CompraService {
     public void anularCompra(Integer idCompra) {
         
         TransactionExecutor.ejecutar(em -> {
-            Compra compra = new CompraRepository(em).buscarPorIdConBloqueo(idCompra).orElseThrow(() -> new IllegalArgumentException("No existe la compra " + idCompra));
+            Compra compra = new CompraRepository(em).buscarPorIdConBloqueo(idCompra).orElseThrow(() -> new EntidadNoEncontradaException("No existe la compra " + idCompra));
             if (compra.getEstado() == EstadoCompra.ANULADA)
-                throw new IllegalStateException("La compra ya esta anulada.");
+                throw new OperacionNoPermitidaException("La compra ya esta anulada.");
             if (compra.getEstado() == EstadoCompra.CONFIRMADA) {
                 for (DetalleCompra detalle : compra.getDetalles()) {
                     Articulo articulo = bloquearArticulo(em, detalle.getArticulo().getId());
@@ -98,17 +101,17 @@ public class CompraService {
 
     public Compra buscarPorId(Integer id) {
         return TransactionExecutor.ejecutar(em -> new CompraRepository(em).buscarPorId(id)
-                .orElseThrow(() -> new IllegalArgumentException("No existe la compra " + id)));
+                .orElseThrow(() -> new EntidadNoEncontradaException("No existe la compra " + id)));
     }
 
     private Articulo bloquearArticulo(EntityManager em, Integer id) {
         
-        return new ArticuloRepository(em).buscarPorIdConBloqueo(id).orElseThrow(() -> new IllegalArgumentException("No existe un articulo de la compra."));
+        return new ArticuloRepository(em).buscarPorIdConBloqueo(id).orElseThrow(() -> new EntidadNoEncontradaException("No existe un articulo de la compra."));
     }
 
     private void validarRango(LocalDateTime desde, LocalDateTime hasta) {
         
         if (desde == null || hasta == null || desde.isAfter(hasta))
-            throw new IllegalArgumentException("El rango de fechas no es valido.");
+            throw new DatosInvalidosException("El rango de fechas no es valido.");
     }
 }

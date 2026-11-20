@@ -1,6 +1,7 @@
 package model;
 
 import util.Validaciones;
+import exception.DatosInvalidosException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -56,11 +57,11 @@ public class DetalleCompra {
     public DetalleCompra(Articulo articulo, int cantidad, BigDecimal precioUnitarioCompra) {
 
         if (articulo == null) {
-            throw new IllegalArgumentException("Debe indicar un artículo.");
+            throw new DatosInvalidosException("Debe indicar un artículo.");
         }
 
         if (!articulo.isActivo()) {
-            throw new IllegalArgumentException("El artículo está inactivo.");
+            throw new DatosInvalidosException("El artículo está inactivo.");
         }
 
         this.articulo = articulo;

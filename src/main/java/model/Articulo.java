@@ -1,6 +1,8 @@
 package model;
 
 import util.Validaciones;
+import exception.DatosInvalidosException;
+import exception.StockInsuficienteException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -77,17 +79,16 @@ public class Articulo {
     private Rubro validarRubro(Rubro rubro) {
 
         if (rubro == null || !rubro.isActivo()) {
-            throw new IllegalArgumentException("Debe seleccionar un rubro activo.");
+            throw new DatosInvalidosException("Debe seleccionar un rubro activo.");
         }
 
         return rubro;
     }
 
-    
     private Proveedor validarProveedor(Proveedor proveedor) {
 
         if (proveedor == null || !proveedor.isActivo()) {
-            throw new IllegalArgumentException("Debe seleccionar un proveedor activo.");
+            throw new DatosInvalidosException("Debe seleccionar un proveedor activo.");
         }
 
         return proveedor;
@@ -132,11 +133,10 @@ public class Articulo {
 
         Validaciones.cantidadPositiva(cantidad);
 
-        // Nunca permitimos que el stock quede negativo.
+        // Comprueba que exista stock suficiente.
         if (cantidad > stockActual) {
-            throw new IllegalStateException(
-                    "Stock insuficiente para el artículo: "
-                    + codigo);
+
+            throw new StockInsuficienteException("Stock insuficiente para el artículo: " + codigo + ". Disponible: " + stockActual + ". Solicitado: " + cantidad);
         }
 
         this.stockActual -= cantidad;

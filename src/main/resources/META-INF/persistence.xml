@@ -15,8 +15,7 @@
             org.hibernate.jpa.HibernatePersistenceProvider
         </provider>
 
-        <!-- Registro de las entidades del sistema -->
-
+        <!-- Entidades del sistema -->
         <class>model.Rubro</class>
         <class>model.Proveedor</class>
         <class>model.Cliente</class>
@@ -28,7 +27,7 @@
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
-        <!-- Configuración de conexión -->
+        <!-- Configuración de conexión MySQL -->
         <properties>
 
             <property name="jakarta.persistence.jdbc.driver"
@@ -43,11 +42,11 @@
             <property name="jakarta.persistence.jdbc.password"
                       value="patan0843"/>
 
-            <!-- Hibernate solamente valida el esquema -->
+            <!-- Hibernate valida la estructura de la base de datos -->
             <property name="hibernate.hbm2ddl.auto"
                       value="validate"/>
 
-            <!-- Mostrar consultas SQL -->
+            <!-- Visualización de consultas SQL -->
             <property name="hibernate.show_sql"
                       value="true"/>
 

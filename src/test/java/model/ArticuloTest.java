@@ -1,5 +1,6 @@
 package model;
 
+import exception.StockInsuficienteException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +25,7 @@ class ArticuloTest {
     @Test
     void noPermiteDescontarMasQueElStock() {
         Articulo a = crearArticulo(2, 1);
-        assertThrows(IllegalStateException.class, () -> a.descontarStock(3));
+        assertThrows(StockInsuficienteException.class, () -> a.descontarStock(3));
         assertEquals(2, a.getStockActual());
     }
 

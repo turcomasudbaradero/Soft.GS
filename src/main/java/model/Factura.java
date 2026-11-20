@@ -2,6 +2,8 @@ package model;
 
 import enums.EstadoFactura;
 import util.Validaciones;
+import exception.DatosInvalidosException;
+import exception.OperacionNoPermitidaException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -79,8 +81,7 @@ public class Factura {
         this.numeroFactura = Validaciones.textoObligatorio(numeroFactura, "Número de factura");
 
         if (cliente == null || !cliente.isActivo()) {
-            throw new IllegalArgumentException(
-                    "Debe seleccionar un cliente activo.");
+            throw new DatosInvalidosException("Debe seleccionar un cliente activo.");
         }
 
         this.cliente = cliente;
@@ -99,11 +100,11 @@ public class Factura {
         verificarBorrador();
 
         if (detalle == null) {
-            throw new IllegalArgumentException("El detalle no puede ser nulo.");
+            throw new DatosInvalidosException("El detalle no puede ser nulo.");
         }
 
         if (!detalle.getArticulo().isActivo()) {
-            throw new IllegalArgumentException("El artículo está inactivo.");
+            throw new DatosInvalidosException("El artículo está inactivo.");
         }
 
         // Evita incorporar dos veces el mismo artículo.
@@ -113,7 +114,7 @@ public class Factura {
                     existente.getArticulo(),
                     detalle.getArticulo())) {
 
-                throw new IllegalArgumentException("El artículo ya está incluido en la factura.");
+                throw new DatosInvalidosException("El artículo ya está incluido en la factura.");
             }
         }
 
@@ -132,7 +133,7 @@ public class Factura {
         verificarBorrador();
 
         if (detalle == null || !detalles.contains(detalle)) {
-            throw new IllegalArgumentException("El detalle no pertenece a esta factura.");
+            throw new DatosInvalidosException("El detalle no pertenece a esta factura.");
         }
 
         detalles.remove(detalle);
@@ -155,7 +156,7 @@ public class Factura {
     private void verificarBorrador() {
 
         if (estado != EstadoFactura.BORRADOR) {
-            throw new IllegalStateException("Solo se puede modificar una factura en borrador.");
+            throw new OperacionNoPermitidaException("Solo se puede modificar una factura en borrador.");
         }
     }
 
@@ -175,17 +176,17 @@ public class Factura {
         verificarBorrador();
 
         if (detalles.isEmpty()) {
-            throw new IllegalStateException("La factura debe contener al menos un artículo.");
+            throw new DatosInvalidosException("La factura debe contener al menos un artículo.");
         }
 
         if (!cliente.isActivo()) {
-            throw new IllegalStateException("El cliente está inactivo.");
+            throw new DatosInvalidosException("El cliente está inactivo.");
         }
 
         for (DetalleFactura detalle : detalles) {
 
             if (!detalle.getArticulo().isActivo()) {
-                throw new IllegalStateException("La factura contiene un artículo inactivo.");
+                throw new DatosInvalidosException("La factura contiene un artículo inactivo.");
             }
         }
     }
@@ -205,7 +206,7 @@ public class Factura {
     public void marcarAnulada() {
 
         if (estado == EstadoFactura.ANULADA) {
-            throw new IllegalStateException("La factura ya está anulada.");
+            throw new OperacionNoPermitidaException("La factura ya está anulada.");
         }
 
         estado = EstadoFactura.ANULADA;

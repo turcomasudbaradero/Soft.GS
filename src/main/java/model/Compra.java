@@ -2,6 +2,8 @@ package model;
 
 import enums.EstadoCompra;
 import util.Validaciones;
+import exception.DatosInvalidosException;
+import exception.OperacionNoPermitidaException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -80,7 +82,7 @@ public class Compra {
         this.numeroComprobante = Validaciones.textoObligatorio(numeroComprobante, "Número de comprobante");
 
         if (proveedor == null || !proveedor.isActivo()) {
-            throw new IllegalArgumentException("Debe seleccionar un proveedor activo.");
+            throw new DatosInvalidosException("Debe seleccionar un proveedor activo.");
         }
 
         this.proveedor = proveedor;
@@ -100,11 +102,11 @@ public class Compra {
         verificarBorrador();
 
         if (detalle == null) {
-            throw new IllegalArgumentException("El detalle no puede ser nulo.");
+            throw new DatosInvalidosException("El detalle no puede ser nulo.");
         }
 
-        if (!detalle.getArticulo().isActivo()) {
-            throw new IllegalArgumentException("El artículo está inactivo.");
+        if (detalle.getArticulo() == null || !detalle.getArticulo().isActivo()) {
+            throw new DatosInvalidosException("Debe seleccionar un artículo activo.");
         }
 
         // Evita repetir el mismo artículo en dos líneas.
@@ -112,7 +114,7 @@ public class Compra {
 
             if (mismoArticulo(existente.getArticulo(), detalle.getArticulo())) {
 
-                throw new IllegalArgumentException("El artículo ya está incluido en la compra.");
+                throw new DatosInvalidosException("El artículo ya está incluido en la compra.");
             }
         }
 
@@ -131,7 +133,7 @@ public class Compra {
         verificarBorrador();
 
         if (detalle == null || !detalles.contains(detalle)) {
-            throw new IllegalArgumentException("El detalle no pertenece a esta compra.");
+            throw new DatosInvalidosException("El detalle no pertenece a esta compra.");
         }
 
         detalles.remove(detalle);
@@ -154,10 +156,9 @@ public class Compra {
     private void verificarBorrador() {
 
         if (estado != EstadoCompra.BORRADOR) {
-            throw new IllegalStateException("Solo se puede modificar una compra en borrador.");
+            throw new OperacionNoPermitidaException("Solo se puede modificar una compra en borrador.");
         }
     }
-
 
     // Calcula el total de la compra.
     public BigDecimal calcularTotal() {
@@ -174,16 +175,16 @@ public class Compra {
         verificarBorrador();
 
         if (detalles.isEmpty()) {
-            throw new IllegalStateException("La compra debe tener al menos un artículo.");
+            throw new OperacionNoPermitidaException("No se puede confirmar una compra sin artículos.");
         }
 
         if (!proveedor.isActivo()) {
-            throw new IllegalStateException("El proveedor está inactivo.");
+            throw new DatosInvalidosException("El proveedor está inactivo.");
         }
 
         for (DetalleCompra detalle : detalles) {
             if (!detalle.getArticulo().isActivo()) {
-                throw new IllegalStateException("La compra contiene un artículo inactivo.");
+                throw new DatosInvalidosException("La compra contiene un artículo inactivo.");
             }
         }
     }
@@ -203,7 +204,7 @@ public class Compra {
     public void marcarAnulada() {
 
         if (estado == EstadoCompra.ANULADA) {
-            throw new IllegalStateException("La compra ya está anulada.");
+            throw new OperacionNoPermitidaException("La compra ya está anulada.");
         }
 
         estado = EstadoCompra.ANULADA;
