@@ -9,12 +9,12 @@
 
     <!-- Identificación del proyecto -->
     <groupId>com.gestionstock</groupId>
-    <artifactId>sistema-gestion-stock</artifactId>
+    <artifactId>software-gestion-stock</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
-    <name>Sistema de Gestion de Stock</name>
+    <name>Software de Gestion de Stock</name>
 
     <!-- Configuración de Java -->
     <properties>
@@ -45,6 +45,14 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>9.7.0</version>
         </dependency>
+        
+        <!-- 4. Librerias de JUnit -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -64,10 +72,31 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
-                    <mainClass>com.gestionstock.App</mainClass>
+                    <mainClass>com.gestionstock.SoftwareGestionStock</mainClass>
                 </configuration>
             </plugin>
-
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                  <execution>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                      <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                          <mainClass>com.gestionstock.SoftwareGestionStock</mainClass>
+                        </transformer>
+                      </transformers>
+                    </configuration>
+                  </execution>
+                </executions>
+             </plugin>
+            
         </plugins>
     </build>
 

@@ -85,7 +85,7 @@ public class MenuPrincipal extends JFrame {
     private JComponent pie() {
         JPanel p = new JPanel(new BorderLayout());
         p.setBorder(BorderFactory.createEmptyBorder(8, 24, 12, 24));
-        JLabel estado = new JLabel("Aplicación de escritorio Java Swing · Persistencia Hibernate/JPA · MySQL");
+        JLabel estado = new JLabel("Aplicación creada por GRUPO 1: Castelli; Masud; Ortiz; Piñeyro - Para POO");
         estado.setForeground(new Color(95, 95, 95)); p.add(estado, BorderLayout.WEST); return p;
     }
 

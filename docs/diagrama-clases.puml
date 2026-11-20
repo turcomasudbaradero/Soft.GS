@@ -1,0 +1,247 @@
+@startuml
+' SOFT.GS - Diagrama de clases (modelo, servicios, persistencia y vista)
+left to right direction
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultFontName Arial
+skinparam packageBorderColor #66809B
+skinparam packageBackgroundColor #F4F7FB
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #355070
+skinparam ArrowColor #52677F
+
+package "com.gestionstock.model" {
+  class Rubro {
+    - Integer id
+    - String codigo
+    - String nombre
+    - String descripcion
+    - boolean activo
+    + modificarDatos(nombre, descripcion)
+    + activar()
+    + desactivar()
+    + toString(): String
+  }
+  class Proveedor {
+    - Integer id
+    - String codigo
+    - String cuitCuil
+    - String razonSocial
+    - String direccion
+    - String telefono
+    - String email
+    - boolean activo
+    + modificarDatos(...)
+    + activar()
+    + desactivar()
+  }
+  class Cliente {
+    - Integer id
+    - String codigo
+    - String apellido
+    - String nombre
+    - String dni
+    - String direccion
+    - String telefono
+    - String email
+    - boolean activo
+    + getNombreCompleto(): String
+    + modificarDatos(...)
+    + activar()
+    + desactivar()
+  }
+  class Articulo {
+    - Integer id
+    - String codigo
+    - String descripcion
+    - int stockActual
+    - int stockMinimo
+    - BigDecimal precioUnitario
+    - boolean activo
+    + incrementarStock(cantidad)
+    + descontarStock(cantidad)
+    + estaEnStockBajo(): boolean
+    + actualizarPrecio(precio)
+    + activar()
+    + desactivar()
+  }
+  class Compra {
+    - Integer id
+    - String numeroComprobante
+    - LocalDateTime fechaCompra
+    - BigDecimal total
+    - EstadoCompra estado
+    - String observaciones
+    - List<DetalleCompra> detalles
+    + agregarDetalle(detalle)
+    + quitarDetalle(detalle)
+    + calcularTotal(): BigDecimal
+    + validarParaConfirmar()
+    + marcarConfirmada()
+    + marcarAnulada()
+  }
+  class DetalleCompra {
+    - Integer id
+    - int cantidad
+    - BigDecimal precioUnitarioCompra
+    - BigDecimal subtotal
+    + calcularSubtotal(): BigDecimal
+  }
+  class Factura {
+    - Integer id
+    - String numeroFactura
+    - LocalDateTime fechaEmision
+    - BigDecimal total
+    - EstadoFactura estado
+    - String observaciones
+    - List<DetalleFactura> detalles
+    + agregarDetalle(detalle)
+    + quitarDetalle(detalle)
+    + calcularTotal(): BigDecimal
+    + validarParaEmitir()
+    + marcarEmitida()
+    + marcarAnulada()
+  }
+  class DetalleFactura {
+    - Integer id
+    - int cantidad
+    - BigDecimal precioUnitario
+    - String descripcionArticulo
+    - BigDecimal subtotal
+    + calcularSubtotal(): BigDecimal
+  }
+}
+
+package "com.gestionstock.enums" {
+  class enum EstadoCompra {
+    BORRADOR
+    CONFIRMADA
+    ANULADA
+  }
+  class enum EstadoFactura {
+    BORRADOR
+    EMITIDA
+    ANULADA
+  }
+}
+
+package "com.gestionstock.repository" {
+  abstract class BaseRepository<T> {
+    # EntityManager em
+    + guardar(entidad): T
+    + actualizar(entidad): T
+    + buscarPorId(id): Optional<T>
+    + listarTodos(): List<T>
+  }
+  class RubroRepository
+  class ProveedorRepository
+  class ClienteRepository
+  class ArticuloRepository
+  class CompraRepository
+  class FacturaRepository
+}
+
+package "com.gestionstock.service" {
+  class RubroService
+  class ProveedorService
+  class ClienteService
+  class ArticuloService
+  class CompraService
+  class FacturaService
+  class StockService
+}
+
+package "com.gestionstock.notification" {
+  interface StockObserver {
+    + actualizarStock(articulo, anterior, nuevo)
+  }
+  class StockNotifier {
+    - List<StockObserver> observadores
+    + registrar(observer)
+    + quitar(observer)
+    + notificar(articulo, anterior, nuevo)
+  }
+  class StockAlertService
+}
+
+package "com.gestionstock.util" {
+  class JpaUtil {
+    - EntityManagerFactory emf
+    + getEntityManagerFactory(): EntityManagerFactory
+    + getEntityManager(): EntityManager
+    + cerrar()
+  }
+  class TransactionExecutor {
+    + ejecutar(operacion)
+  }
+  class Validaciones
+}
+
+package "com.gestionstock.view" {
+  class UISupport
+  class MenuPrincipal
+}
+
+' Relaciones del dominio
+Rubro "1" <-- "0..*" Articulo : clasifica
+Proveedor "1" <-- "0..*" Articulo : proveedor habitual
+Proveedor "1" <-- "0..*" Compra : registra
+Cliente "1" <-- "0..*" Factura : realiza
+Compra "1" *-- "0..*" DetalleCompra : contiene
+Articulo "1" <-- "0..*" DetalleCompra : artículo
+Factura "1" *-- "0..*" DetalleFactura : contiene
+Articulo "1" <-- "0..*" DetalleFactura : artículo
+Compra --> EstadoCompra
+Factura --> EstadoFactura
+
+' Servicios usan repositorios
+RubroService --> RubroRepository
+ProveedorService --> ProveedorRepository
+ClienteService --> ClienteRepository
+ArticuloService --> ArticuloRepository
+ArticuloService --> RubroRepository
+ArticuloService --> ProveedorRepository
+CompraService --> CompraRepository
+CompraService --> ArticuloRepository
+CompraService --> ProveedorRepository
+FacturaService --> FacturaRepository
+FacturaService --> ArticuloRepository
+FacturaService --> ClienteRepository
+StockService --> ArticuloRepository
+
+' Persistencia y transacciones
+BaseRepository ..> JpaUtil
+BaseRepository <|-- RubroRepository
+BaseRepository <|-- ProveedorRepository
+BaseRepository <|-- ClienteRepository
+BaseRepository <|-- ArticuloRepository
+BaseRepository <|-- CompraRepository
+BaseRepository <|-- FacturaRepository
+TransactionExecutor ..> JpaUtil
+TransactionExecutor ..> BaseRepository
+
+' Observer y presentación
+StockNotifier o-- "0..*" StockObserver
+StockAlertService ..|> StockObserver
+MenuPrincipal ..> RubroService
+MenuPrincipal ..> ProveedorService
+MenuPrincipal ..> ClienteService
+MenuPrincipal ..> ArticuloService
+MenuPrincipal ..> CompraService
+MenuPrincipal ..> FacturaService
+MenuPrincipal ..> StockService
+MenuPrincipal ..> StockNotifier
+App ..> MenuPrincipal
+
+note bottom of Factura
+El servicio valida todos los artículos,
+descontando stock dentro de una transacción.
+El precio del detalle es histórico.
+end note
+note bottom of Compra
+La compra incrementa stock al confirmar.
+CompraService coordina la transacción.
+end note
+@enduml
