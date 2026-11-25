@@ -32,7 +32,7 @@ public class RubroForm extends JFrame {
         JButton nuevo = UiSupport.boton("Nuevo / Limpiar");
         JButton guardar = UiSupport.boton("Guardar rubro");
         JButton modificar = UiSupport.boton("Modificar seleccionado");
-        JButton baja = UiSupport.boton("Dar de baja");
+        JButton baja = UiSupport.boton("Dar de baja/alta");
         JButton actualizar = UiSupport.boton("Actualizar lista");
 
         nuevo.addActionListener(e -> limpiar());
@@ -47,7 +47,7 @@ public class RubroForm extends JFrame {
         }));
         baja.addActionListener(e -> UiSupport.ejecutar(this, () -> {
             Integer id = UiSupport.idSeleccionado(tabla);
-            if (UiSupport.confirmar(this, "¿Desea desactivar el rubro seleccionado?")) {
+            if (UiSupport.confirmar(this, "¿Desea desactivar/activar el rubro seleccionado?")) {
                 servicio.desactivar(id); limpiar(); cargar();
             }
         }));

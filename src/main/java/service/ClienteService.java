@@ -33,7 +33,11 @@ public class ClienteService {
         
         TransactionExecutor.ejecutar(em -> {
             Cliente c = new ClienteRepository(em).buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("No existe el cliente " + id));
-            c.desactivar();
+            if (c.isActivo()) {
+                c.desactivar();
+            } else {
+                    c.activar();
+            }
             return null;
         });
     }

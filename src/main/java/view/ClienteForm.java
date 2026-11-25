@@ -30,7 +30,7 @@ public class ClienteForm extends JFrame {
                 new String[]{"Código", "Apellido", "Nombre", "DNI", "Dirección", "Teléfono", "Email"},
                 new JComponent[]{txtCodigo, txtApellido, txtNombre, txtDni, txtDireccion, txtTelefono, txtEmail});
         JButton nuevo = UiSupport.boton("Nuevo / Limpiar"), guardar = UiSupport.boton("Guardar cliente"),
-                modificar = UiSupport.boton("Modificar seleccionado"), baja = UiSupport.boton("Dar de baja"),
+                modificar = UiSupport.boton("Modificar seleccionado"), baja = UiSupport.boton("Dar de baja/alta"),
                 actualizar = UiSupport.boton("Actualizar lista");
 
         nuevo.addActionListener(e -> limpiar());
@@ -46,7 +46,7 @@ public class ClienteForm extends JFrame {
         }));
         baja.addActionListener(e -> UiSupport.ejecutar(this, () -> {
             Integer id = UiSupport.idSeleccionado(tabla);
-            if (UiSupport.confirmar(this, "¿Desea desactivar el cliente seleccionado?")) {
+            if (UiSupport.confirmar(this, "¿Desea desactivar/activar el cliente seleccionado?")) {
                 servicio.desactivar(id); limpiar(); cargar();
             }
         }));

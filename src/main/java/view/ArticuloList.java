@@ -36,7 +36,7 @@ public class ArticuloList extends JFrame {
 
         JButton nuevo = UiSupport.boton("Nuevo artículo");
         JButton modificar = UiSupport.boton("Modificar");
-        JButton baja = UiSupport.boton("Dar de baja");
+        JButton baja = UiSupport.boton("Dar de baja/alta");
         JButton ingreso = UiSupport.boton("Ingresar stock");
         JButton salida = UiSupport.boton("Retirar stock");
         JButton actualizar = UiSupport.boton("Actualizar");
@@ -52,7 +52,7 @@ public class ArticuloList extends JFrame {
         }));
         baja.addActionListener(e -> UiSupport.ejecutar(this, () -> {
             Integer id = UiSupport.idSeleccionado(tabla);
-            if (UiSupport.confirmar(this, "¿Desea desactivar el artículo seleccionado?")) {
+            if (UiSupport.confirmar(this, "¿Desea desactivar/activar el artículo seleccionado?")) {
                 articuloService.desactivar(id); cargar();
             }
         }));

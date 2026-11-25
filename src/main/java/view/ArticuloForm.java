@@ -96,14 +96,20 @@ public class ArticuloForm extends JDialog {
     private void seleccionarRubro(Integer id) {
         for (int i = 0; i < cbRubro.getItemCount(); i++) {
             Rubro r = cbRubro.getItemAt(i);
-            if (id != null && id.equals(r.getId())) { cbRubro.setSelectedIndex(i); return; }
+            if (id != null && id.equals(r.getId())) { 
+                cbRubro.setSelectedIndex(i); 
+                return; 
+            }
         }
     }
 
     private void seleccionarProveedor(Integer id) {
         for (int i = 0; i < cbProveedor.getItemCount(); i++) {
             Proveedor p = cbProveedor.getItemAt(i);
-            if (id != null && id.equals(p.getId())) { cbProveedor.setSelectedIndex(i); return; }
+            if (id != null && id.equals(p.getId())) { 
+                cbProveedor.setSelectedIndex(i); 
+                return; 
+            }
         }
     }
 

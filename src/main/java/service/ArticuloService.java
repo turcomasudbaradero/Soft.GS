@@ -47,7 +47,11 @@ public class ArticuloService {
     public void desactivar(Integer id) {
         TransactionExecutor.ejecutar(em -> {
             Articulo a = new ArticuloRepository(em).buscarPorId(id).orElseThrow(() -> new EntidadNoEncontradaException("No existe el articulo " + id));
-            a.desactivar();
+            if (a.isActivo()) {
+                a.desactivar();
+            } else {
+                    a.activar();
+            }
             return null;
         });
     }

@@ -139,7 +139,14 @@ public final class UiSupport {
 
     public static boolean confirmar(Component padre, String mensaje) {
         
-        return JOptionPane.showConfirmDialog(padre, mensaje, "Confirmar operación", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
+        // Crear botones personalizados en español.
+        Object[] opciones = {"Sí", "No"};
+
+        int respuesta = JOptionPane.showOptionDialog(
+                padre, mensaje, "Confirmar operación", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[1]);
+
+        // Devuelve true solamente cuando se selecciona "Sí".
+        return respuesta == 0;
     }
 
     public static void exito(Component padre, String mensaje) {

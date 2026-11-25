@@ -35,7 +35,11 @@ public class ProveedorService {
         
         TransactionExecutor.ejecutar(em -> {
             Proveedor p = new ProveedorRepository(em).buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("No existe el proveedor " + id));
-            p.desactivar();
+            if (p.isActivo()) {
+                p.desactivar();
+            } else {
+                    p.activar();
+            }
             return null;
         });
     }

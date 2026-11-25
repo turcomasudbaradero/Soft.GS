@@ -31,7 +31,11 @@ public class RubroService {
         
         TransactionExecutor.ejecutar(em -> {
             Rubro rubro = new RubroRepository(em).buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("No existe el rubro " + id));
-            rubro.desactivar();
+            if (rubro.isActivo()) {
+                rubro.desactivar();
+            } else {
+                    rubro.activar();
+            }   
             return null;
         });
     }

@@ -161,8 +161,10 @@ public class FacturaForm extends JFrame {
                 "Factura " + f.getNumeroFactura() + " - Vista previa", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE);
         if (opcion == JOptionPane.OK_OPTION) {
-            try { documento.print(); }
-            catch (PrinterException ex) { throw new IllegalStateException("No se pudo imprimir la factura: " + ex.getMessage(), ex); }
+            try { 
+                documento.print(); 
+            } catch (PrinterException ex) { 
+                throw new IllegalStateException("No se pudo imprimir la factura: " + ex.getMessage(), ex); }
         }
     }
 
@@ -189,6 +191,7 @@ public class FacturaForm extends JFrame {
     }
 
     private void exigirFactura() { if (idActual == null) throw new IllegalStateException("Primero cree o cargue una factura."); }
+    
     private void exigirBorrador() {
         exigirFactura();
         Factura f = facturaService.prepararImpresion(idActual);
