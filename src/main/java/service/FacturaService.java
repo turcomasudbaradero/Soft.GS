@@ -23,13 +23,39 @@ public class FacturaService {
     private record Alerta(Articulo articulo, int anterior, int nuevo) { }
 
     public Integer crearBorrador(String numero, Integer idCliente, String observaciones) {
-    
+
         return TransactionExecutor.ejecutar(em -> {
-            var cliente = new ClienteRepository(em).buscarPorId(idCliente).orElseThrow(() -> new EntidadNoEncontradaException("No existe el cliente."));
-            Factura factura = new Factura(numero, cliente, observaciones);
-            new FacturaRepository(em).guardar(factura);
-            return factura.getId();
-        });
+
+                // Validar que el número de factura no esté vacío.
+                if (numero == null || numero.isBlank()) {
+                    throw new DatosInvalidosException("Debe ingresar un número de factura.");
+                }
+
+                // Eliminar los espacios innecesarios.
+                String numeroNormalizado = numero.trim();
+
+                ClienteRepository clienteRepository = new ClienteRepository(em);
+                FacturaRepository facturaRepository = new FacturaRepository(em);
+
+                // Comprobar si el número de factura ya existe.
+                if (facturaRepository.buscarPorNumero(numeroNormalizado).isPresent()) {
+                    throw new DatosInvalidosException(
+                        "El número de factura " + numeroNormalizado
+                        + " ya se encuentra registrado.\n"
+                        + "Por favor, ingrese otro número de factura.");
+                }
+
+                // Buscar el cliente seleccionado.
+                var cliente = clienteRepository.buscarPorId(idCliente)
+                    .orElseThrow(() -> new EntidadNoEncontradaException("No existe el cliente."));
+
+                // Crear y guardar el borrador de la factura.
+                Factura factura = new Factura(numeroNormalizado, cliente, observaciones);
+
+                facturaRepository.guardar(factura);
+
+                return factura.getId();
+            });
     }
 
     // Agrega una linea tomando el precio vigente directamente del articulo.
