@@ -27,7 +27,9 @@ public class MenuPrincipal extends JFrame {
     public MenuPrincipal() {
         super("SOFT.GS - Software de Gestión de Stock");
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        setMinimumSize(new Dimension(850, 560)); setSize(1000, 650); setLocationRelativeTo(null);
+        setMinimumSize(new Dimension(650, 620));
+        setSize(670, 680);
+        setLocationRelativeTo(null);
         setLayout(new BorderLayout(12, 12));
         add(encabezado(), BorderLayout.NORTH);
         add(panelNavegacion(), BorderLayout.CENTER);
@@ -42,7 +44,6 @@ public class MenuPrincipal extends JFrame {
             }
         });
     }
-
 
     private JComponent encabezado() {
 
@@ -107,15 +108,15 @@ public class MenuPrincipal extends JFrame {
         titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 18f));
 
         // Grilla de secciones: dos columnas.
-        JPanel grilla = new JPanel(new GridLayout(0, 2, 14, 14));
+        JPanel grilla = new JPanel(new GridLayout(0, 2, 10, 10));
 
-        grilla.add(tarjeta("Rubros", "Administrar categorías de artículos", () -> new RubroForm().setVisible(true)));
-        grilla.add(tarjeta("Proveedores", "Registrar y consultar proveedores", () -> new ProveedorForm().setVisible(true)));
-        grilla.add(tarjeta("Clientes", "Registrar y consultar clientes", () -> new ClienteForm().setVisible(true)));
-        grilla.add(tarjeta("Artículos", "Altas, modificaciones y control del inventario", () -> new ArticuloList().setVisible(true)));
-        grilla.add(tarjeta("Compras", "Registrar ingresos de mercadería", () -> new CompraForm().setVisible(true)));
-        grilla.add(tarjeta("Facturación", "Crear, emitir, anular e imprimir facturas", () -> new FacturaForm().setVisible(true)));
-        grilla.add(tarjeta("Stock bajo y reportes", "Consultar mínimos, compras y ventas por fecha", () -> new ReporteStockBajo().setVisible(true)));
+        grilla.add(contenedorTarjeta(tarjeta("Rubros", "Administrar categorías de artículos", () -> new RubroForm().setVisible(true))));
+        grilla.add(contenedorTarjeta(tarjeta("Proveedores", "Registrar y consultar proveedores", () -> new ProveedorForm().setVisible(true))));
+        grilla.add(contenedorTarjeta(tarjeta("Clientes", "Registrar y consultar clientes", () -> new ClienteForm().setVisible(true))));
+        grilla.add(contenedorTarjeta(tarjeta("Artículos", "Altas, modificaciones y control del inventario", () -> new ArticuloList().setVisible(true))));
+        grilla.add(contenedorTarjeta(tarjeta("Compras", "Registrar ingresos de mercadería", () -> new CompraForm().setVisible(true))));
+        grilla.add(contenedorTarjeta(tarjeta("Facturación", "Crear, emitir, anular e imprimir facturas", () -> new FacturaForm().setVisible(true))));
+        grilla.add(contenedorTarjeta(tarjeta("Stock bajo y reportes", "Consultar mínimos, compras y ventas por fecha", () -> new ReporteStockBajo().setVisible(true))));
 
         // No establecer un tamaño fijo para la grilla.
         // El JScrollPane permitirá desplazarse por todas las tarjetas.
@@ -131,58 +132,72 @@ public class MenuPrincipal extends JFrame {
         
     }
 
-    private JPanel tarjeta(String titulo, String descripcion, Runnable accion) {
-        
-        JPanel tarjeta = new JPanel(new BorderLayout(10, 5));
 
+    private JPanel tarjeta(String titulo, String descripcion, Runnable accion) {
+
+        JPanel tarjeta = new JPanel(new BorderLayout(6, 3));
+
+        // Borde exterior y márgenes internos.
         tarjeta.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(205, 213, 222)),
-                BorderFactory.createEmptyBorder(12, 16, 12, 16)
-        ));
+                BorderFactory.createEmptyBorder(5, 9, 5, 9)));
 
         // Panel izquierdo: título y descripción.
-        JPanel informacion = new JPanel(new BorderLayout(5, 8));
+        JPanel informacion = new JPanel(new BorderLayout(3, 3));
 
-        // Nombre de la sección.
         JLabel nombre = new JLabel(titulo);
-        nombre.setFont(nombre.getFont().deriveFont(Font.BOLD, 17f));
+        nombre.setFont(nombre.getFont().deriveFont(Font.BOLD, 13f));
 
-        // Descripción de la sección.
-        JLabel texto = new JLabel("<html><body style='width:230px'>" + descripcion + "</body></html>");
+        JLabel texto = new JLabel("<html><body style='width:170px'>" + descripcion + "</body></html>");
+
         texto.setForeground(new Color(85, 85, 85));
+        texto.setFont(texto.getFont().deriveFont(10f));
 
         informacion.add(nombre, BorderLayout.NORTH);
         informacion.add(texto, BorderLayout.CENTER);
 
-        // Botón cuadrado a la derecha.
         JButton abrir = UiSupport.boton("Abrir");
 
-        abrir.setPreferredSize(new Dimension(75, 75));
-        abrir.setMinimumSize(new Dimension(75, 75));
+        abrir.setPreferredSize(new Dimension(70, 38));
+        abrir.setMinimumSize(new Dimension(70, 38));
 
-        // Ejecutar la acción cuando se presiona el botón.
         abrir.addActionListener(e -> {
             if (accion != null) {
                 accion.run();
             }
         });
 
-        // Distribuir los componentes.
         tarjeta.add(informacion, BorderLayout.CENTER);
         tarjeta.add(abrir, BorderLayout.EAST);
 
-        // Tamaño preferido de la tarjeta.
-        tarjeta.setPreferredSize(new Dimension(320, 140));
+        // Todas las tarjetas tendrán las mismas dimensiones.
+        Dimension tamano = new Dimension(270, 78);
+
+        tarjeta.setPreferredSize(tamano);
+        tarjeta.setMinimumSize(tamano);
+        tarjeta.setMaximumSize(tamano);
 
         return tarjeta;
-    
     }
 
+    private JPanel contenedorTarjeta(JPanel tarjeta) {
+
+        // El FlowLayout mantiene la tarjeta en su tamaño preferido.
+        JPanel contenedor = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+
+        contenedor.setOpaque(false);
+        contenedor.add(tarjeta);
+
+        return contenedor;
+    }
+
+    
     private JComponent pie() {
         JPanel p = new JPanel(new BorderLayout());
         p.setBorder(BorderFactory.createEmptyBorder(8, 24, 12, 24));
         JLabel estado = new JLabel("Aplicación creada por ©GRUPO 1: Castelli; Masud; Ortiz; Piñeyro - Para POO - UNSAdA - 2026");
-        estado.setForeground(new Color(95, 95, 95)); p.add(estado, BorderLayout.WEST); return p;
+        estado.setForeground(new Color(95, 95, 95)); p.add(estado, BorderLayout.WEST); 
+        return p;
     }
 
     private void mostrarAlertaStock(Articulo articulo, int anterior, int nuevo) {
