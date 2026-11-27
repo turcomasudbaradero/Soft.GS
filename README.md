@@ -193,7 +193,10 @@ Las enumeraciones (`enum`) permiten trabajar con un conjunto limitado de valores
 En SOFT.GS se utilizan para representar los estados de las operaciones comerciales, evitando el uso de textos libres y reduciendo posibles errores en la lógica del programa.
 
 ### Estructura del paquete
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7c68acd7384c3fe7bd94cf263342b4ab5faff961
 ```text
 enums/
 ├── EmisionCompra.java
