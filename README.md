@@ -177,7 +177,36 @@ Contiene las clases que implementan las reglas de negocio. Los servicios coordin
 
 Las operaciones que afectan varias entidades deben ejecutarse dentro de una única transacción para evitar registros incompletos o inconsistencias.
 
-### 5.7. Paquete `view`
+
+## 5.7. Paquete `enums`
+El paquete `enums` contiene las enumeraciones del sistema, utilizadas para representar los posibles estados de emisión de las operaciones comerciales.
+
+### Clases que lo integran
+
+| Clase | Descripción |
+|---|---|
+| `EmisionCompra.java` | Define los posibles estados de una compra, permitiendo identificar en qué situación se encuentra dentro del sistema. |
+| `EmisionFactura.java` | Define los posibles estados de una factura, permitiendo distinguir las diferentes situaciones de su proceso de emisión. |
+
+### ¿Para qué se utilizan las enumeraciones?
+Las enumeraciones (`enum`) permiten trabajar con un conjunto limitado de valores predefinidos.
+En SOFT.GS se utilizan para representar los estados de las operaciones comerciales, evitando el uso de textos libres y reduciendo posibles errores en la lógica del programa.
+
+### Estructura del paquete
+```text
+enums/
+├── EmisionCompra.java
+└── EmisionFactura.java
+```
+
+### Ventajas de su implementación
+- **Organización:** centralizan los estados posibles de las operaciones.
+- **Seguridad:** evitan asignar valores que no estén definidos.
+- **Legibilidad:** facilitan la comprensión del código.
+- **Mantenimiento:** permiten modificar los estados desde un lugar específico.
+- **Consistencia:** ayudan a mantener criterios uniformes en compras y facturación.
+
+### 5.8. Paquete `view`
 Contiene las clases responsables de la interfaz gráfica desarrollada con Java Swing. Las vistas fueron creadas como clases Java comunes, escribiendo el código de construcción y organización de los componentes gráficos directamente en cada clase, sin utilizar el diseñador visual de formularios de NetBeans.
 
 Los componentes gráficos se crean y organizan directamente mediante código Java, utilizando clases de Swing como `JFrame`, `JPanel`, `JButton`, `JLabel`, `JTextField`, `JTable`, `JComboBox` y `JOptionPane`. Esto permite controlar explícitamente la creación, disposición y comportamiento de los elementos de la interfaz.
@@ -191,7 +220,7 @@ Las vistas interactúan con los servicios para ejecutar las operaciones del sist
 
 La interfaz se comunica con los servicios, no directamente con Hibernate. De esta manera se mantiene separada la presentación de las reglas de negocio y del acceso a datos.
 
-### 5.8. Paquete `exception`
+### 5.9. Paquete `exception`
 Contiene las excepciones personalizadas del sistema. Estas permiten representar errores relacionados con las reglas de negocio y las operaciones realizadas por los usuarios.
 
 Estas excepciones facilitan el manejo controlado de errores y permiten mostrar mensajes comprensibles al usuario. Por ejemplo, se pueden utilizar para informar situaciones como stock insuficiente, datos inválidos, operaciones no permitidas por relaciones existentes, o registros inexistentes.
