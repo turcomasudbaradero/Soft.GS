@@ -113,7 +113,7 @@ public class MenuPrincipal extends JFrame {
         grilla.add(contenedorTarjeta(tarjeta("Rubros", "Administrar categorías de artículos", () -> new RubroForm().setVisible(true))));
         grilla.add(contenedorTarjeta(tarjeta("Proveedores", "Registrar y consultar proveedores", () -> new ProveedorForm().setVisible(true))));
         grilla.add(contenedorTarjeta(tarjeta("Clientes", "Registrar y consultar clientes", () -> new ClienteForm().setVisible(true))));
-        grilla.add(contenedorTarjeta(tarjeta("Artículos", "Altas, modificaciones y control del inventario", () -> new ArticuloList().setVisible(true))));
+        grilla.add(contenedorTarjeta(tarjeta("Artículos", "Altas, modificaciones<br>y control del inventario", () -> new ArticuloList().setVisible(true))));
         grilla.add(contenedorTarjeta(tarjeta("Compras", "Registrar ingresos de mercadería", () -> new CompraForm().setVisible(true))));
         grilla.add(contenedorTarjeta(tarjeta("Facturación", "Crear, emitir, anular e imprimir facturas", () -> new FacturaForm().setVisible(true))));
         grilla.add(contenedorTarjeta(tarjeta("Stock bajo y reportes", "Consultar mínimos, compras y ventas por fecha", () -> new ReporteStockBajo().setVisible(true))));

@@ -178,7 +178,7 @@ Contiene las clases que implementan las reglas de negocio. Los servicios coordin
 Las operaciones que afectan varias entidades deben ejecutarse dentro de una única transacción para evitar registros incompletos o inconsistencias.
 
 
-## 5.7. Paquete `enums`
+### 5.7. Paquete `enums`
 El paquete `enums` contiene las enumeraciones del sistema, utilizadas para representar los posibles estados de emisión de las operaciones comerciales.
 
 ### Clases que lo integran
@@ -193,10 +193,6 @@ Las enumeraciones (`enum`) permiten trabajar con un conjunto limitado de valores
 En SOFT.GS se utilizan para representar los estados de las operaciones comerciales, evitando el uso de textos libres y reduciendo posibles errores en la lógica del programa.
 
 ### Estructura del paquete
-<<<<<<< HEAD
-
-=======
->>>>>>> 7c68acd7384c3fe7bd94cf263342b4ab5faff961
 ```text
 enums/
 ├── EmisionCompra.java
